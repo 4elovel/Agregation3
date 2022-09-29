@@ -3,6 +3,7 @@
 #include <fstream>
 #include <windows.h>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ private:
     string model;
     unsigned int seats;
 public:
+    int x = 0, y = 0;
 
     Bus(string _model, int _seats) : model(_model), seats(_seats)
     {
@@ -36,7 +38,20 @@ public:
     }
     void Print()
     {
-        cout << "Модель: " << model << ", сидінь: " << seats << endl;
+        cout << "\nАвтобус на станції.\n" << "модель: " << model << ", сидінь: " << seats << endl;
+    }
+    void Print_cords()
+    {
+        cout << "\nАвтобус не на станції!!\n" "модель: " << model << ", сидінь: " << seats << " координати: (" << this->x << "," << this->y << ")" << endl;
+    }
+    int get_distance()
+    {
+        return pow(pow((this->x - 0), 2.0) + pow((this->y - 0), 2.0), 0.5);
+    }
+    void print_distance()
+    {
+        int dis = get_distance();
+        cout << "Відстань між станцією та автобусом моделі - " << model << " з кількістью посадочних місць - " << seats << " це (" << dis << ") одиниць!\n";
     }
 };
 
@@ -47,6 +62,7 @@ class Car
 private:
     string model;
 public:
+    int x = 0, y = 0;
 
     Car(string _model) :model(_model)
     {
@@ -61,7 +77,20 @@ public:
     }
     void Print()
     {
-        cout << "Модель: " << model << endl;
+        cout << "\nМашина на станції.\n" << "Модель: " << model << endl;
+    }
+    void Print_cords()
+    {
+        cout << "\nМашина не на станції!!\n" << " Модель: " << model << " координати: (" << this->x << "," << this->y << ")" << endl;
+    }
+    int get_distance()
+    {
+        return pow(pow((this->x - 0), 2.0) + pow((this->y - 0), 2.0), 0.5);
+    }
+    void print_distance()
+    {
+        int dis = get_distance();
+        cout << "Відстань між станцією та машиною моделі - " << model << " це (" << dis << ") одиниць!\n";
     }
 };
 
@@ -72,6 +101,8 @@ class Truck
 private:
     string model;
 public:
+
+    int x = 0, y = 0;
 
     Truck(string _model) :model(_model)
     {
@@ -86,7 +117,20 @@ public:
     }
     void Print()
     {
-        cout << "Модель: " << model << endl;
+        cout << "\nВантажівка на станції.\n" << "модель: " << model << endl;
+    }
+    void Print_cords()
+    {
+        cout << "\nВантажівка не на станції!!\n" << " Модель: " << model << " координати: (" << this->x << "," << this->y << ")" << endl;
+    }
+    int get_distance()
+    {
+        return pow(pow((this->x - 0), 2.0) + pow((this->y - 0), 2.0), 0.5);
+    }
+    void print_distance()
+    {
+        int dis = get_distance();
+        cout << "Відстань між станцією та вантажівкою моделі - " << model << " це (" << dis << ") одиниць!\n";
     }
 };
 
@@ -94,11 +138,10 @@ public:
 
 class Station
 {
-private:
+public:
     vector <Bus> B;
     vector <Car> C;
     vector <Truck> T;
-public:
     //Bus
     Bus GetBus(unsigned int number)
     {
@@ -110,6 +153,7 @@ public:
             return Bus("", 0);
         }
     }
+
     void AddBus(string model, unsigned int seats)
     {
         if (B.size() < MAX_BUS_VEHICLES)
@@ -124,6 +168,7 @@ public:
             return;
         }
     }
+
     void DelBus(unsigned int number)
     {
         if (number <= B.size())
@@ -132,6 +177,12 @@ public:
             cout << "автобус видалено!" << endl;
         }
     }
+
+    void GoBus(unsigned int number) {
+        B[number].x = 1 + (rand() % 10);
+        B[number].y = 1 + (rand() % 10);
+    }
+
     //Car
     Car GetCar(unsigned int number)
     {
@@ -143,6 +194,7 @@ public:
             return Car("");
         }
     }
+
     void AddCar(string model)
     {
         if (C.size() < MAX_CAR_VEHICLES)
@@ -157,6 +209,7 @@ public:
             return;
         }
     }
+
     void DelCar(unsigned int number)
     {
         if (number < C.size())
@@ -164,6 +217,11 @@ public:
             C.erase(C.begin() + (number + 1));
             cout << "вантажівку видалено!" << endl;
         }
+    }
+
+    void GoCar(unsigned int number) {
+        C[number].x = 1 + (rand() % 10);
+        C[number].y = 1 + (rand() % 10);
     }
     //Truck
 
@@ -177,6 +235,7 @@ public:
             return Truck("");
         }
     }
+
     void AddTruck(string model)
     {
         if (T.size() < MAX_TRUCK_VEHICLES)
@@ -191,6 +250,7 @@ public:
             return;
         }
     }
+
     void DelTruck(unsigned int number)
     {
         if (number < T.size())
@@ -200,6 +260,10 @@ public:
         }
     }
 
+    void GoTruck(unsigned int number) {
+        T[number].x = 1 + (rand() % 10);
+        T[number].y = 1 + (rand() % 10);
+    }
     //Print
     void Print()
     {
@@ -208,13 +272,20 @@ public:
             cout << "Станція для автобусів пуста!" << endl;
         }
         else {
-            cout << "Кількість автобусів = " << B.size() << endl;
+            cout << "\nКількість автобусів = " << B.size() << endl;
             if (B.size() > 0)
             {
                 cout << "Відомості про автобуси:" << endl;
                 for (int i = 0; i < B.size(); i++)
                 {
-                    B[i].Print();
+                    if (B[i].x == 0 && B[i].y == 0)
+                    {
+                        B[i].Print();
+                    }
+                    else
+                    {
+                        B[i].Print_cords();
+                    }
                 }
             }
         }
@@ -222,13 +293,20 @@ public:
             cout << "Станція для автівок пуста!" << endl;
         }
         else {
-            cout << "Кількість автомобілів = " << C.size() << endl;
+            cout << "\nКількість автомобілів = " << C.size() << endl;
             if (C.size() > 0)
             {
                 cout << "Відомості про автомобілі:" << endl;
                 for (int i = 0; i < C.size(); i++)
                 {
-                    C[i].Print();
+                    if (C[i].x == 0 && C[i].y == 0)
+                    {
+                        C[i].Print();
+                    }
+                    else
+                    {
+                        C[i].Print_cords();
+                    }
                 }
             }
         }
@@ -236,13 +314,20 @@ public:
             cout << "Станція для вантажівок пуста!" << endl;
         }
         else {
-            cout << "Кількість вантажівок = " << T.size() << endl;
+            cout << "\nКількість вантажівок = " << T.size() << endl;
             if (T.size() > 0)
             {
                 cout << "Відомості про вантажівки:" << endl;
                 for (int i = 0; i < T.size(); i++)
                 {
-                    T[i].Print();
+                    if (T[i].x == 0 && T[i].y == 0)
+                    {
+                        T[i].Print();
+                    }
+                    else
+                    {
+                        T[i].Print_cords();
+                    }
                 }
             }
         }
@@ -287,14 +372,14 @@ public:
         }
         else
         {
-            char size;
+            int size;
             string model;
             int seats;
             fin >> size;
             getline(fin, model);
-            if (size!=0)
+            if (size != 0)
             {
-                for (size_t i = 0; i < size - 48; i++)
+                for (size_t i = 0; i < size; i++)
                 {
                     getline(fin, model);
                     fin >> seats;
@@ -307,7 +392,7 @@ public:
             getline(fin, model);
             if (size != 0)
             {
-                for (size_t i = 0; i < size - 48; i++)
+                for (size_t i = 0; i < size; i++)
                 {
                     getline(fin, model);
                     this->AddCar(model);
@@ -318,7 +403,7 @@ public:
             getline(fin, model);
             if (size != 0)
             {
-                for (size_t i = 0; i < size - 48; i++)
+                for (size_t i = 0; i < size; i++)
                 {
                     getline(fin, model);
                     this->AddTruck(model);
@@ -338,16 +423,29 @@ int main() { // Щоб додати новий транспортний засі
 
     Station s;
     cout << "ініцалізація попередньої інформації:\n";
-       s.Read(); // зчитування інформації попереднього сеансу
-       cout << endl << endl;
-     s.Print();
+    s.Read(); // зчитування інформації попереднього сеансу
+    cout << endl << endl << endl;
+    s.GoCar(1);
+    s.GoCar(2);
+    s.GoBus(1);
+    s.GoTruck(1);
+    s.Print();
 
     //s.AddBus("Mercedes", 6);
     //s.AddTruck("Volkswagen");
     //s.AddCar("Audi");
 
      //s.Print();
-    cout << endl << endl;
+
+    cout << endl << endl << endl;
+
+    s.C[1].print_distance();
+    cout << endl;
+    s.B[1].print_distance();
+    cout << endl;
+    s.T[1].print_distance();
+
+    cout << endl << endl << endl;
     cout << "запис поточної інформації про сеанс:\n";
     s.Write(); //запис поточної інформації про сеанс
     cout << "запис завершено\n\n\n";
